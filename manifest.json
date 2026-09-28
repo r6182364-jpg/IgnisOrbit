@@ -1,0 +1,52 @@
+﻿[
+    {
+        "investigationId":  "PSI-98",
+        "title":  "Spacecraft Fire Safety Experiment-I",
+        "doi":  "10.60555/0t15-1z43",
+        "license":  "CC0-1.0",
+        "source":  "https://psi.nasa.gov/physci/repo/data/investigations/PSI-98",
+        "file":  "PSI-98_Experimental table_SAFFIRE-1.csv",
+        "bytes":  469,
+        "rows":  4
+    },
+    {
+        "investigationId":  "PSI-99",
+        "title":  "Spacecraft Fire Experiment-II",
+        "doi":  "10.60555/2chp-m469",
+        "license":  "CC0-1.0",
+        "source":  "https://psi.nasa.gov/physci/repo/data/investigations/PSI-99",
+        "file":  "PSI-99_Experimental table_SAFFIRE-2.csv",
+        "bytes":  1973,
+        "rows":  15
+    },
+    {
+        "investigationId":  "PSI-100",
+        "title":  "Spacecraft Fire Experiment-III",
+        "doi":  "10.60555/040q-4h36",
+        "license":  "CC0-1.0",
+        "source":  "https://psi.nasa.gov/physci/repo/data/investigations/PSI-100",
+        "file":  "PSI-100_Experimental table_SAFFIRE-3.csv",
+        "bytes":  239,
+        "rows":  2
+    },
+    {
+        "investigationId":  "PSI-101",
+        "title":  "Smoke Aerosol Measurement Experiment-Reflight",
+        "doi":  "10.60555/2np7-jv14",
+        "license":  "CC0-1.0",
+        "source":  "https://psi.nasa.gov/physci/repo/data/investigations/PSI-101",
+        "file":  "PSI-101_Experimental table_SAME-R.csv",
+        "bytes":  5674,
+        "rows":  109
+    },
+    {
+        "investigationId":  "PSI-102",
+        "title":  "Smoke and Aerosol Measurement Experiment",
+        "doi":  "10.60555/gd4k-8h62",
+        "license":  "CC0-1.0",
+        "source":  "https://psi.nasa.gov/physci/repo/data/investigations/PSI-102",
+        "file":  "PSI-102_Experimental table_SAME.csv",
+        "bytes":  331,
+        "rows":  8
+    }
+]

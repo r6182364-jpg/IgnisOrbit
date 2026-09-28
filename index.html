@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f3f5f1">
+    <meta name="description" content="توأم رقمي تفاعلي لتحليل مخاطر الحرائق في البيئات الفضائية.">
+    <title>SpaceFire Twin | التوأم الرقمي للسلامة الفضائية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+    </script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="#overview" aria-label="SpaceFire Twin الرئيسية">
+            <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span><strong>SPACEFIRE</strong><small>DIGITAL TWIN / 01</small></span>
+        </a>
+        <nav class="top-nav" aria-label="التنقل الرئيسي">
+            <a class="active" href="#overview">مساحة العمل</a>
+            <a href="#trajectory-panel">مقارنة النتائج</a>
+            <a href="#signature-workspace">بصمة الحريق</a>
+            <a href="#recommendations">مواد العينات</a>
+        </nav>
+        <div class="top-meta"><span class="live-dot"></span><span>نموذج تاريخي محلي</span><span class="mission-code">NASA PSI · SAFFIRE</span></div>
+    </header>
+
+    <main id="overview">
+        <section class="page-heading">
+            <div>
+                    <div class="eyebrow"><span class="eyebrow-line"></span> منصة بيانات تجارب الاحتراق الفضائي</div>
+                    <h1>قارن التجارب <em>وافهم حدودها.</em></h1>
+                    <p>استكشف التوأم التوضيحي، وارفع telemetry وإطارات اللهب لبناء بصمة زمنية من بيانات SAFFIRE.</p>
+            </div>
+            <div class="mission-select-wrap">
+                <label for="environment">مشهد العرض</label>
+                <select id="environment" aria-label="اختيار البيئة الفضائية">
+                    <option value="station">مقصورة مرجعية</option>
+                    <option value="vehicle">مركبة افتراضية</option>
+                    <option value="lab">مختبر افتراضي</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="metric-strip" aria-label="ملخص الحالة">
+            <article class="metric-card"><div class="metric-top"><span>مؤشر توافق نتيجة الاختبار</span><span class="metric-symbol risk-symbol">!</span></div><div class="metric-value"><strong id="riskValue">—</strong><span>%</span><small id="riskLabel" class="tag tag-low">بانتظار المقارنة</small></div><div class="meter"><span id="riskMeter" style="width:0%"></span></div></article>
+            <article class="metric-card"><div class="metric-top"><span>حالات الاحتراق في التدريب</span><span class="metric-symbol time-symbol">◷</span></div><div class="metric-value"><strong id="trainingCount">11</strong><small>اختبارًا من SAFFIRE I–II</small></div><div class="metric-caption">نتائج صريحة: مستمر / غير ملحوظ</div></article>
+            <article class="metric-card"><div class="metric-top"><span>بيانات التوأم</span><span class="metric-symbol sensor-symbol">⌁</span></div><div class="metric-value"><strong id="sensorCount">04</strong><small>مكوّنات قابلة للاختيار</small></div><div class="sensor-status"><span></span> معدات · طاقة · أكسجين · طاقم</div></article>
+            <article class="metric-card metric-source"><div class="metric-top"><span>مرجع النموذج</span><span class="metric-symbol source-symbol">↗</span></div><div class="source-title" id="modelSource">NASA PSI · SAFFIRE I–II</div><div class="metric-caption" id="modelDataStatus">11 حالة تاريخية · لا بيانات حية</div></article>
+        </section>
+
+        <section class="workspace-grid">
+            <article class="panel twin-panel">
+                <div class="panel-heading">
+                    <div><div class="section-kicker">01 / التوأم الرقمي</div><h2>تكوين البيئة</h2></div>
+                        <div class="panel-actions"><span class="scale-label">التوأم الرقمي <b>3D</b></span><button class="icon-button" id="resetButton" type="button" aria-label="إعادة ضبط البيئة" title="إعادة ضبط البيئة">↺</button></div>
+                </div>
+                <div class="twin-stage">
+                    <div class="stage-label stage-label-top"><span></span> VIRTUAL MODULE <b>بيئة توضيحية</b></div>
+                    <div class="station-map twin-3d-stage" id="stationMap" aria-label="توأم رقمي ثلاثي الأبعاد لوحدة فضائية">
+                        <canvas id="twinCanvas" aria-label="مشهد ثلاثي الأبعاد للمقصورة الفضائية"></canvas>
+                        <div class="scene-grid" aria-hidden="true"></div>
+                        <div class="scene-chip"><i></i><span>NASA PSI / SAFFIRE</span><b id="sceneMode">HISTORICAL DATA</b></div>
+                        <div class="scene-coordinate">REFERENCE MODULE <b id="sceneEnvironment">REFERENCE CABIN</b></div>
+                        <button class="hotspot hotspot-battery" data-module="battery" type="button" aria-pressed="false"><i></i> حزمة البطارية</button>
+                        <button class="hotspot hotspot-electronics" data-module="electronics" type="button" aria-pressed="false"><i></i> الإلكترونيات</button>
+                        <button class="hotspot hotspot-oxygen" data-module="oxygen" type="button" aria-pressed="false"><i></i> خط الأكسجين</button>
+                        <button class="hotspot hotspot-crew" data-module="crew" type="button" aria-pressed="false"><i></i> حيّز الطاقم</button>
+                        <div class="scene-readout"><span><i class="readout-green"></i> INPUT / AIR FLOW</span><b id="sceneAirFlow">20 cm/s</b><span><i class="readout-orange"></i> INPUT / O₂</span><b id="sceneOxygen">21.5%</b></div>
+                        <div class="scene-controls"><span>اسحب للدوران</span><span>عجلة التكبير</span></div>
+                        <div class="scene-loading" id="sceneLoading">تهيئة التوأم الرقمي ثلاثي الأبعاد…</div>
+                    </div>
+                    <div class="stage-legend"><span><i class="legend-sensor"></i> مؤشر بصري توضيحي</span><span><i class="legend-path"></i> مسار بصري توضيحي</span><span><i class="legend-hot"></i> موضع عرض افتراضي</span><span class="drag-hint">حدد مكوّنًا أو اسحب المشهد</span></div>
+                </div>
+                <div class="twin-footer"><div><span class="footer-label">مادة عينة SAFFIRE</span><select id="material"><option value="sibal">SIBAL · قطن / ألياف زجاجية</option><option value="silicone">سيليكون</option><option value="pmma">PMMA · أكريليك</option></select></div><div><span class="footer-label">اتجاه تدفق الهواء</span><select id="flowDirection"><option value="Concurrent">مع اتجاه الانتشار</option><option value="Opposed">عكس اتجاه الانتشار</option></select></div><div class="edit-note"><span class="edit-pip"></span> مقارنة باختبارات تاريخية</div></div>
+            </article>
+
+            <aside class="panel scenario-panel">
+                <div class="panel-heading"><div><div class="section-kicker">02 / موضع بصري</div><h2>حدّد نقطة العرض</h2></div><span class="step-count">3 مواقع</span></div>
+                <p class="panel-intro">اختيار موضع على التوأم للعرض فقط؛ لا يدخل في حساب النموذج.</p>
+                <div class="scenario-list" role="group" aria-label="موضع إبراز بصري">
+                    <button class="scenario-option selected" data-scenario="battery" type="button" aria-pressed="true"><span class="scenario-icon icon-battery">▰</span><span class="scenario-copy"><strong>حزمة البطارية</strong><small>نقطة إبراز افتراضية</small></span><span class="radio-dot"></span></button>
+                    <button class="scenario-option" data-scenario="electronics" type="button" aria-pressed="false"><span class="scenario-icon icon-circuit">⌘</span><span class="scenario-copy"><strong>وحدة الإلكترونيات</strong><small>نقطة إبراز افتراضية</small></span><span class="radio-dot"></span></button>
+                    <button class="scenario-option" data-scenario="materials" type="button" aria-pressed="false"><span class="scenario-icon icon-flame">△</span><span class="scenario-copy"><strong>منطقة المواد</strong><small>نقطة إبراز افتراضية</small></span><span class="radio-dot"></span></button>
+                </div>
+                <div class="scenario-divider"></div>
+                <div class="scenario-controls"><label for="oxygenLevel">تركيز الأكسجين المسجّل <strong><span id="oxygenOutput">21.5</span>%</strong></label><input id="oxygenLevel" type="range" min="21.5" max="22.1" step="0.1" value="21.5"><div class="range-labels"><span>21.5%</span><span>22.1%</span></div></div>
+                <div class="scenario-controls"><label for="airFlow">سرعة تدفق الهواء <strong><span id="airFlowOutput">20</span> cm/s</strong></label><input id="airFlow" type="range" min="20" max="30" step="10" value="20"><div class="range-labels"><span>20 · متاح</span><span>30 · بلا نتيجة</span></div></div>
+                <div class="scenario-controls sensor-control"><label>مصدر البيانات <strong>NASA PSI</strong></label><div class="sensor-chips"><span><i></i> SAFFIRE-I</span><span><i></i> SAFFIRE-II</span><span><i></i> قياسات تاريخية</span></div></div>
+                <button class="run-button" id="simulateButton" type="button"><span class="run-icon">▶</span><span>مقارنة بالتجارب</span><span class="run-arrow">←</span></button>
+                <p class="simulation-note"><span>i</span> مؤشر تجريبي على 11 حالة، وليس احتمال حريق أو اعتماد سلامة.</p>
+            </aside>
+        </section>
+
+        <section class="signature-workspace panel" id="signature-workspace">
+            <div class="panel-heading signature-heading">
+                <div><div class="section-kicker">02 / محرك السمات متعدد الوسائط</div><h2>ابنِ بصمة الحريق الديناميكية</h2></div>
+                <span class="data-badge"><i></i><span id="signatureState">بانتظار ملفات التجربة</span></span>
+            </div>
+                <p class="panel-intro signature-intro">ارفع telemetry وأرشيف الصور أو فيديو الكاميرا. يستخرج النظام سمات الحساسات والصورة محليًا في المتصفح؛ لا تُرسل الملفات إلى خادم.</p>
+            <div class="signature-imports">
+                <label class="import-zone" for="telemetryFile">
+                    <span class="import-icon telemetry-import-icon">⌁</span>
+                    <span class="import-copy"><strong>بيانات الحساسات</strong><small id="telemetryFileName">CSV أو Excel · الوقت، الحرارة، الضغط، O₂، CO₂، التدفق</small></span>
+                    <span class="import-action">اختيار ملف</span>
+                    <input id="telemetryFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+                </label>
+                <label class="import-zone" for="cameraFiles">
+                    <span class="import-icon camera-import-icon">▣</span>
+                    <span class="import-copy"><strong>صور اللهب / كاميرا التجربة</strong><small id="cameraFileName">ZIP لإطارات JPEG، صور مرتبة، أو فيديو MP4 / WebM</small></span>
+                    <span class="import-action">اختيار ملفات</span>
+                    <input id="cameraFiles" type="file" accept=".zip,image/*,video/mp4,video/webm,video/quicktime" multiple>
+                </label>
+            </div>
+            <div class="signature-actions">
+                <button class="run-button signature-run" id="buildSignatureButton" type="button"><span class="run-icon">▶</span><span>استخراج البصمة</span><span class="run-arrow">←</span></button>
+                <span class="alignment-note"><i></i> ملفات SAFFIRE-I: <a href="https://psi.nasa.gov/physci/repo/data/investigations/PSI-98" target="_blank" rel="noreferrer">NASA PSI · Raw Data / Science Documents</a>. المزامنة الزمنية تحتاج timestamps مشتركة.</span>
+            </div>
+            <div class="signature-output" id="signatureOutput" hidden>
+                <div class="signature-metrics" aria-label="ملخص بصمة الحريق">
+                    <article><span>تغطية الإطارات الدافئة</span><strong id="flameAreaMetric">—</strong><small>تقدير بصري من الصورة</small></article>
+                    <article><span>امتداد اللهب النسبي</span><strong id="flameLengthMetric">—</strong><small>نسبة من ارتفاع الإطار</small></article>
+                    <article><span>سطوع منطقة اللهب</span><strong id="flameBrightnessMetric">—</strong><small>مقياس بكسل 0–255</small></article>
+                    <article><span>معدل نمو المساحة</span><strong id="flameGrowthMetric">—</strong><small>نقطة مئوية / تقدم زمني</small></article>
+                </div>
+                <div class="signature-chart-wrap">
+                    <div class="signature-chart-head"><div><strong>تطور بصمة التجربة</strong><small id="signatureChartCaption">القنوات الفعلية تُعرض بعد استخراج الملفات</small></div><span class="chart-axis-label">تقدم التجربة النسبي →</span></div>
+                    <canvas id="signatureChart" height="230" aria-label="مخطط زمني لخصائص الحريق والحساسات"></canvas>
+                    <div class="signature-legend" id="signatureLegend"></div>
+                </div>
+                <div class="signature-data-wrap">
+                    <div class="signature-chart-head"><div><strong>قيم القنوات المستخرجة</strong><small>القيم الأصلية ووحداتها؛ المخطط أعلاه مطبّع للمقارنة البصرية فقط.</small></div></div>
+                    <div class="signature-table-scroll"><table class="signature-data-table"><thead><tr><th>القناة / المصدر</th><th>البداية</th><th>أدنى</th><th>أعلى</th><th>النهاية</th></tr></thead><tbody id="signatureChannelRows"></tbody></table></div>
+                </div>
+                <div class="signature-bottomline"><span class="signature-dot"></span><strong id="signatureSummary">البصمة قيد التحليل</strong><small id="signatureProvenance"></small></div>
+                <p class="signature-visual-note">معاينة اللهب في المجسم تمثيل بصري لمقاييس الصورة، وليست إعادة بناء مكانية لموضع اللهب داخل المركبة.</p>
+            </div>
+            <div class="signature-empty" id="signatureEmpty"><span>↳</span><strong>من القياس إلى البصمة</strong><small>المدخلات الخام ← السمات الزمنية ← Fire Signature</small></div>
+        </section>
+
+        <section class="lower-grid">
+            <article class="panel trajectory-panel" id="trajectory-panel">
+                <div class="panel-heading"><div><div class="section-kicker">03 / مقارنة تاريخية</div><h2>مقارنة بنتائج SAFFIRE <span class="title-english">NASA PSI DATA</span></h2></div><span class="confidence"><i></i> تحقق داخلي استكشافي <b id="confidenceValue">11 حالة</b></span></div>
+                <div class="trajectory-content">
+                    <div class="timeline" id="timeline"><div class="timeline-track"><span class="track-progress" id="trackProgress"></span></div><div class="timeline-step"><span class="timeline-dot"></span><strong>النتيجة المسجلة</strong><small id="stepNow">—</small></div><div class="timeline-step"><span class="timeline-dot"></span><strong>مادة العينة</strong><small id="stepFour">—</small></div><div class="timeline-step"><span class="timeline-dot"></span><strong>مدة الاحتراق</strong><small id="stepNine">—</small></div><div class="timeline-step"><span class="timeline-dot"></span><strong>المصدر</strong><small id="stepFifteen">NASA PSI</small></div></div>
+                    <div class="trajectory-summary"><div class="summary-marker">↗</div><div><strong id="trajectoryTitle">جاهز لمقارنة شروط الاختبار</strong><p id="trajectoryText">المؤشر يصف توافق الشروط مع نتائج الاحتراق المستمر المسجلة في SAFFIRE، ولا يمثل احتمال حريق في محطة.</p></div></div>
+                </div>
+            </article>
+            <article class="panel recommendations-panel" id="recommendations">
+                <div class="panel-heading"><div><div class="section-kicker">04 / مواد اختبرتها ناسا</div><h2>مقارنة مواد العينات</h2></div><span class="recommendation-count" id="recommendationCount">02</span></div>
+                <div class="recommendation-list" id="recommendationList"><div class="recommendation-item"><span class="recommendation-number">01</span><div><strong>قارن عينة SIBAL المركبة</strong><small>قطن وألياف زجاجية · SAFFIRE-I</small></div><button type="button" class="apply-recommendation" data-material="sibal" aria-label="مقارنة عينة SIBAL" title="اختيار المادة">＋</button></div><div class="recommendation-item"><span class="recommendation-number">02</span><div><strong>قارن عينة السيليكون</strong><small>اختبارات إخماد اللهب · SAFFIRE-II</small></div><button type="button" class="apply-recommendation" data-material="silicone" aria-label="مقارنة عينة السيليكون" title="اختيار المادة">＋</button></div></div>
+                <div class="design-impact"><div class="impact-icon">↘</div><div><strong>مؤشر توافق النموذج</strong><small>ليس تصنيفًا معتمدًا للسلامة</small></div><span id="impactValue">—</span></div>
+            </article>
+        </section>
+        <section class="data-sources" aria-label="مصادر البيانات">
+            <span class="section-kicker">مصادر التجارب · ترخيص CC0</span>
+            <a href="https://psi.nasa.gov/physci/repo/data/investigations/PSI-98" target="_blank" rel="noreferrer">SAFFIRE-I · PSI-98</a>
+            <a href="https://psi.nasa.gov/physci/repo/data/investigations/PSI-99" target="_blank" rel="noreferrer">SAFFIRE-II · PSI-99</a>
+            <a href="https://psi.nasa.gov/physci/repo/data/investigations/PSI-100" target="_blank" rel="noreferrer">SAFFIRE-III · PSI-100</a>
+            <a href="https://psi.nasa.gov/physci/repo/data/investigations/PSI-101" target="_blank" rel="noreferrer">SAME-R · PSI-101</a>
+        </section>
+        <footer class="app-footer"><span><b>SPACEFIRE TWIN</b> · بيئة بحثية تجريبية</span><span>النموذج لا يحل محل أنظمة السلامة أو المراجعة الهندسية المعتمدة.</span></footer>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="data/nasa/model.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="signature-engine.js"></script>
+    <script type="module" src="twin-3d.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
